@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import { TextField, Button, Container, Typography } from '@mui/material';
 
 function App() {
   const [input, setInput] = useState('');
@@ -43,16 +44,27 @@ function App() {
   };
 
   return (
-    <div className="calculator">
-      <input
-        type="text"
-        placeholder="Operator followed by numbers..."
+    <Container maxWidth="sm" className="calculator">
+      <Typography variant="h4" gutterBottom>
+        Calculator
+      </Typography>
+      <TextField
+        fullWidth
+        label="Operator followed by numbers..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        variant="outlined"
+        margin="normal"
       />
-      <button onClick={calculateResult}>Calculate</button>
-      <div className="result">{result}</div>
-    </div>
+      <Button variant="contained" color="primary" onClick={calculateResult}>
+        Calculate
+      </Button>
+      {result && (
+        <Typography variant="h6" className="result">
+          Result: {result}
+        </Typography>
+      )}
+    </Container>
   );
 }
 
