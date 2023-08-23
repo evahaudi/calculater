@@ -2,43 +2,46 @@ import React, { useState } from 'react';
 import './App.css';
 import { TextField, Button, Container, Typography } from '@mui/material';
 
+function parseExpression(tokens) {
+  const token = tokens.shift();
+
+  if (!isNaN(parseFloat(token))) {
+    return parseFloat(token);
+  } else if (token === '+' || token === '-' || token === '*' || token === '/') {
+    const leftOperand = parseExpression(tokens);
+    const rightOperand = parseExpression(tokens);
+    switch (token) {
+      case '+':
+        return leftOperand + rightOperand;
+      case '-':
+        return leftOperand - rightOperand;
+      case '*':
+        return leftOperand * rightOperand;
+      case '/':
+        return leftOperand / rightOperand;
+      default:
+        return NaN;
+    }
+  }
+}
+
 function App() {
   const [input, setInput] = useState('');
   const [result, setResult] = useState('');
 
   const calculateResult = () => {
     if (!input) {
-      alert('Please enter an operation.');
+      alert('Please enter an expression.');
       return;
     }
 
-    const operator = input.charAt(0);
-    const numbers = input.slice(2).split(' ').map(num => parseFloat(num));
+    const tokens = input.split(/\s+/);
+    const calculatedResult = parseExpression(tokens);
 
-    if (!['+', '-', '*', '/'].includes(operator)) {
-      alert('Invalid operator.');
+    if (isNaN(calculatedResult)) {
+      alert('Invalid expression.');
       return;
     }
-
-    if (numbers.some(isNaN)) {
-      alert('Invalid number format.');
-      return;
-    }
-
-    let calculatedResult = numbers.reduce((acc, num) => {
-      switch (operator) {
-        case '+':
-          return acc + num;
-        case '-':
-          return acc - num;
-        case '*':
-          return acc * num;
-        case '/':
-          return acc / num;
-        default:
-          return acc;
-      }
-    });
 
     setResult(calculatedResult);
   };
@@ -50,7 +53,7 @@ function App() {
       </Typography>
       <TextField
         fullWidth
-        label="Operator followed by numbers..."
+        label="Expression..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
         variant="outlined"
